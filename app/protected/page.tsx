@@ -1,43 +1,39 @@
 import { redirect } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
-import { InfoIcon } from "lucide-react";
-import { FetchDataSteps } from "@/components/tutorial/fetch-data-steps";
-import { Suspense } from "react";
+import { UrlForm } from "@/components/ytsummary/url-form";
+import { UrlTable } from "@/components/ytsummary/url-table";
+import { addUrlAction } from "@/app/protected/actions";
+import { Stack, Text, Title } from "@mantine/core";
 
-async function UserDetails() {
+export default async function ProtectedPage() {
   const supabase = await createClient();
-  const { data, error } = await supabase.auth.getClaims();
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
 
-  if (error || !data?.claims) {
+  if (error || !user) {
     redirect("/auth/login");
   }
 
-  return JSON.stringify(data.claims, null, 2);
-}
+  const { data: urlRows } = await supabase
+    .from("url_table")
+    .select(
+      "id,url,count,video_duration,created_at,url_summary_table(summary_id,is_favorite,summary_table(id,summary,created_at))",
+    )
+    .order("created_at", { ascending: false });
 
-export default function ProtectedPage() {
   return (
-    <div className="flex-1 w-full flex flex-col gap-12">
-      <div className="w-full">
-        <div className="bg-accent text-sm p-3 px-5 rounded-md text-foreground flex gap-3 items-center">
-          <InfoIcon size="16" strokeWidth={2} />
-          This is a protected page that you can only see as an authenticated
-          user
-        </div>
-      </div>
-      <div className="flex flex-col gap-2 items-start">
-        <h2 className="font-bold text-2xl mb-4">Your user details</h2>
-        <pre className="text-xs font-mono p-3 rounded border max-h-32 overflow-auto">
-          <Suspense>
-            <UserDetails />
-          </Suspense>
-        </pre>
-      </div>
-      <div>
-        <h2 className="font-bold text-2xl mb-4">Next steps</h2>
-        <FetchDataSteps />
-      </div>
-    </div>
+    <Stack gap="xl">
+      <Stack gap="xs">
+        <Title order={2}>YTSummary</Title>
+        <Text c="dimmed">
+          Drop a YouTube link and let Gemini create a summary in seconds.
+        </Text>
+      </Stack>
+      <UrlForm action={addUrlAction} />
+      <UrlTable rows={urlRows ?? []} />
+    </Stack>
   );
 }
