@@ -1,6 +1,7 @@
+import "@mantine/core/styles.css";
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
-import { ThemeProvider } from "next-themes";
+import { MantineProvider } from "@mantine/core";
 import "./globals.css";
 
 const defaultUrl = process.env.VERCEL_URL
@@ -9,8 +10,8 @@ const defaultUrl = process.env.VERCEL_URL
 
 export const metadata: Metadata = {
   metadataBase: new URL(defaultUrl),
-  title: "Next.js and Supabase Starter Kit",
-  description: "The fastest way to build apps with Next.js and Supabase",
+  title: "YTSummary",
+  description: "Summarize YouTube videos with Gemini AI",
 };
 
 const geistSans = Geist({
@@ -27,14 +28,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${geistSans.className} antialiased`}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {children}
-        </ThemeProvider>
+        <MantineProvider>{children}</MantineProvider>
       </body>
     </html>
   );

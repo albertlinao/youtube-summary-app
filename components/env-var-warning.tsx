@@ -1,20 +1,17 @@
-import { Badge } from "./ui/badge";
-import { Button } from "./ui/button";
+import { Badge, Button, Group } from "@mantine/core";
 
 export function EnvVarWarning() {
   return (
-    <div className="flex gap-4 items-center">
-      <Badge variant={"outline"} className="font-normal">
-        Supabase environment variables required
-      </Badge>
-      <div className="flex gap-2">
-        <Button size="sm" variant={"outline"} disabled>
+    <Group gap="sm">
+      <Badge variant="outline">Supabase environment variables required</Badge>
+      <Group gap="xs">
+        <Button size="xs" variant="outline" disabled>
           Sign in
         </Button>
-        <Button size="sm" variant={"default"} disabled>
+        <Button size="xs" disabled>
           Sign up
         </Button>
-      </div>
-    </div>
+      </Group>
+    </Group>
   );
 }
